@@ -49,8 +49,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.button:
-                log("Кнопка нажата");
-                //int weight = Integer.parseInt(newWeight_edt.getText().toString());
                 double weightDbl;
                 try {
                     Number formatted = NumberFormat.getInstance().parse(newWeight_edt.getText().toString());
@@ -61,7 +59,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 int weight = (int)(weightDbl * 1000);
                 long ms = GregorianCalendar.getInstance().getTimeInMillis();
-                log("" + db.addWeigth(weight, ms));
                 break;
         }
     }

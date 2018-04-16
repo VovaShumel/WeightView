@@ -1,9 +1,6 @@
 package com.livejournal.lofe.weightview;
 
-import android.os.Environment;
 import android.util.Log;
-import java.io.*;
-//import java.util.*;
 import java.lang.String;
 
 import fi.iki.elonen.NanoHTTPD;
@@ -39,18 +36,49 @@ class HTTPD {
 
         @Override
         public Response serve(IHTTPSession session) {
-            String msg = "<html><body><h1>Lofe</h1>\n";
+            String msg =
+            "<html>" +
+                "<head>" +
+                    "<script type=\"text/javascript\" src=\"https://www.gstatic.com/charts/loader.js\"></script>" +
+                    "<script type=\"text/javascript\">" +
+                        "google.charts.load('current', {packages: ['corechart', 'line']});" +
+                        "google.charts.setOnLoadCallback(drawLineColors);" +
+                        "function drawLineColors() {" +
+                            "var data = new google.visualization.DataTable();" +
+                            "data.addColumn('number', 'X');" +
+                            "data.addColumn('number', 'Dogs');" +
+                            "data.addColumn('number', 'Cats');" +
+                            "data.addRows([" +
+                                "[0, 0, 0],    [1, 10, 5]" +
+                            "]);" +
+                            "var options = {" +
+                                "hAxis: {" +
+                                    "title: 'Time'" +
+                                "}," +
+                                "vAxis: {" +
+                                    "title: 'Popularity'" +
+                                "}," +
+                                "colors: ['#a52714', '#097138']" +
+                            "};" +
+                            "var chart = new google.visualization.LineChart(document.getElementById('chart_div'));" +
+                            "chart.draw(data, options);" +
+                        "}" +
+                    "</script>" +
+                "</head>" +
+                "<body>" +
+                    "<h1>Weight chart</h1>\n" +
+                    "<div id=\"chart_div\" style=\"width: 900px; height: 500px\"></div>" +
+                "/<body>" +
+            "/<html>\n";
             //Map<String, String> parms = session.getParms();
             Map<String, List<String>> parms = session.getParameters();
             if (parms.get("username") == null) {
-                msg += "<form action='?' method='get'>\n";
-                msg += "<p>Your name: <input type='text' name='username'></p>\n";
-                msg += "</form>\n";
+
             } else {
                 msg += "<p>Hello, " + parms.get("username") + "!</p>";
             }
-            return newFixedLengthResponse( msg + "</body></html>\n" );
+            //return newFixedLengthResponse( msg + "</body></html>\n" );
+            return newFixedLengthResponse(msg);
         }
     }
 }
-
