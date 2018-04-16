@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">WeightView</string>
+    <string name="btnAddWeigthName">Записать</string>
 </resources>
