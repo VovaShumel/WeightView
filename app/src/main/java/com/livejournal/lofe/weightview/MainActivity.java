@@ -59,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 int weight = (int)(weightDbl * 1000);
                 long ms = GregorianCalendar.getInstance().getTimeInMillis();
+                db.addWeigth(weight, ms);
                 break;
         }
     }

@@ -1,5 +1,7 @@
 package com.livejournal.lofe.weightview;
 
+import android.app.Application;
+import android.database.Cursor;
 import android.util.Log;
 import java.lang.String;
 
@@ -8,6 +10,8 @@ import fi.iki.elonen.NanoHTTPD;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+
+import static com.livejournal.lofe.weightview.MyUtil.log;
 
 class HTTPD {
 
@@ -42,23 +46,36 @@ class HTTPD {
                     "<script type=\"text/javascript\" src=\"https://www.gstatic.com/charts/loader.js\"></script>" +
                     "<script type=\"text/javascript\">" +
                         "google.charts.load('current', {packages: ['corechart', 'line']});" +
-                        "google.charts.setOnLoadCallback(drawLineColors);" +
-                        "function drawLineColors() {" +
+                        "google.charts.setOnLoadCallback(drawLine);" +
+                        "function drawLine() {" +
                             "var data = new google.visualization.DataTable();" +
-                            "data.addColumn('number', 'X');" +
-                            "data.addColumn('number', 'Dogs');" +
-                            "data.addColumn('number', 'Cats');" +
-                            "data.addRows([" +
-                                "[0, 0, 0],    [1, 10, 5]" +
+                            "data.addColumn('number', 'Date');" +
+                            "data.addColumn('number', 'Масса');" +
+                            "data.addRows([";
+                            DB db = new DB(MyApplication.getContext());
+                            db.openRead();
+                            Cursor c = db.getAllWeight();
+                            if (c.moveToFirst()) {
+                                do {
+                                    msg += "[" + c.getPosition() + ", " + c.getString(1) + "]";
+                                    //"[0, 0],    [1, 5]" +
+                                    if (c.getPosition() < c.getCount())
+                                        msg += ", ";
+                                } while (c.moveToNext());
+                            }
+                            c.close();
+                            db.close();
+                            msg +=
+                            //msg += "[0, 0],    [1, 5]" +
                             "]);" +
                             "var options = {" +
                                 "hAxis: {" +
-                                    "title: 'Time'" +
+                                    "title: 'Дата'" +
                                 "}," +
                                 "vAxis: {" +
-                                    "title: 'Popularity'" +
+                                    "title: 'Масса'" +
                                 "}," +
-                                "colors: ['#a52714', '#097138']" +
+                                "colors: ['#a52714']" +
                             "};" +
                             "var chart = new google.visualization.LineChart(document.getElementById('chart_div'));" +
                             "chart.draw(data, options);" +
@@ -66,7 +83,7 @@ class HTTPD {
                     "</script>" +
                 "</head>" +
                 "<body>" +
-                    "<h1>Weight chart</h1>\n" +
+                    "<h1>График веса</h1>\n" +
                     "<div id=\"chart_div\" style=\"width: 900px; height: 500px\"></div>" +
                 "/<body>" +
             "/<html>\n";

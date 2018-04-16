@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import static android.os.Environment.getExternalStorageDirectory;
+import static com.livejournal.lofe.weightview.MyUtil.log;
 
 class DB {
     private static final String DB_PATH = getExternalStorageDirectory().getAbsolutePath() + "/";
@@ -28,6 +29,7 @@ class DB {
 
     public DB(Context ctx) {
         mCtx = ctx;
+        //log(ctx.toString());
     }
 
     // открыть подключение
@@ -37,12 +39,23 @@ class DB {
         mDB.setForeignKeyConstraintsEnabled(true);
     }
 
+    public void openRead() {
+        mDBHelper = new DBHelper(mCtx, DB_PATH + DB_NAME, null, DB_VERSION);
+        mDB = mDBHelper.getReadableDatabase();
+        mDB.setForeignKeyConstraintsEnabled(true);
+    }
+
     long addWeigth(int weight, long ms) {
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_WEIGHT, weight);
         cv.put(COLUMN_DATE, ms);
         return mDB.insert(WEIGHTS_TABLE, null, cv);
     }
+
+    public Cursor getAllWeight() {
+        return mDB.query(WEIGHTS_TABLE, null, null, null, null, null, null);
+    }
+
 
     public void close() {
         if (mDBHelper!=null)
